@@ -19,7 +19,26 @@ let routes = {
     }
   },
   'POST':{
+    'api/login': (req, res)=>{
+      let body = '';
+      req.on('data', data=>{
+        body +=data;
+        if(body.length > 2097152){
+          res.writeHead(413, {'Content-type': 'text/html'});
+          res.end('<h3> Error: the file being uploaded exceeds the 2MB limit</h3>');
+          req.connection.destroy();
+        }
+      });
 
+      res.on('end' ()=>{
+        let params = qs.parse(body);
+        console.log('Username: ' params['username']);
+        console.log('Password: ', params['password']);
+        //Query a db to see if the users exists
+        //If son send a JSON response SPA
+        res.end();
+      })
+    }
   },
   'NA':(req, res)=>{
     res.writeHead(404);
